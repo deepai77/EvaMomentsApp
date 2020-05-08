@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.RegistrationActivity">
+    <ScrollView
+        android:scrollbars="vertical"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:layout_width="230dp"
+            android:layout_height="90dp"
+            android:src="@drawable/logo"
+            android:id="@+id/logo"
+            android:layout_marginBottom="20dp" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/logo"
+            android:text="Eva Moments"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+<LinearLayout
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="10dp"
+    android:layout_below="@+id/textView"
+    android:orientation="vertical"
+    android:id="@+id/linearLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:id="@+id/familyPic"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/name"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:hint="Enter Full Name"
+            android:imeActionId="4"
+            android:imeOptions="actionDone|flagNoExtractUi"
+            android:inputType="text"
+            android:layout_margin="5dp"
+            android:background="@drawable/edit_text_border"
+            android:padding="8dp"
+            />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/email"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:hint="Enter Email"
+        android:imeActionId="4"
+        android:imeOptions="actionDone|flagNoExtractUi"
+        android:inputType="text"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_text_border"
+        android:padding="8dp"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/city"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:hint="Enter City"
+        android:imeActionId="4"
+        android:imeOptions="actionDone|flagNoExtractUi"
+        android:inputType="text"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_text_border"
+        android:padding="8dp"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/state"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:hint="Enter State or Province"
+        android:imeActionId="4"
+        android:imeOptions="actionDone|flagNoExtractUi"
+        android:inputType="text"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_text_border"
+        android:padding="8dp"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/country"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:hint="Enter Country"
+        android:imeActionId="4"
+        android:imeOptions="actionDone|flagNoExtractUi"
+        android:inputType="text"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_text_border"
+        android:padding="8dp"
+        />
+</LinearLayout>
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background"
+            android:layout_below="@id/linearLayout"
+            android:layout_margin="20dp"
+            android:text="Select a family picture"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            android:id="@+id/submit"
+            android:textColor="#fff"/>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/progress_loader"
+        android:visibility="gone"/>
+    </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

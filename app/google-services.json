@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "206563927366",
+    "firebase_url": "https://eva-moments-87233.firebaseio.com",
+    "project_id": "eva-moments-87233",
+    "storage_bucket": "eva-moments-87233.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206563927366:android:787d4d1d33195ff26fb147",
+        "android_client_info": {
+          "package_name": "com.cindura.evamomentsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206563927366-3r2eat32kc3o0ep4qhk2a44tlq97g3k3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cindura.evamomentsapp",
+            "certificate_hash": "96502c23335112fd1562ebc68e0af744fd6425b7"
+          }
+        },
+        {
+          "client_id": "206563927366-9ob6ldlhou4hdhl4mkb2385vmo4h24gk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPmy1p3MJKUt6WH1nlhJp0WmMB-6cLJ5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206563927366-9ob6ldlhou4hdhl4mkb2385vmo4h24gk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

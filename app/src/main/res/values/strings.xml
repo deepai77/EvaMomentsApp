@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Moments</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="quit">Thank you for using Eva Moments</string>
+    <string name="would_you">Would you like to create a show? Please say yes or no.</string>
+    <string name="great">Great. Here is a list of shows you can watch.</string>
+    <string name="list">Hello Stu. Would you like to see a show? Please say yes or no.</string>
+    <string name="ask_keywords">Speak in 3 key words to orally recall this show.</string>
+    <string name="ask_prelude">Speak a 10 second comment to greet or say hello to the person watching this show.</string>
+    <string name="congratulations">Congratulations! You successfully created an Eva show</string>
+    <string name="congratulations_modified">Congratulations! You successfully modified the Eva Show</string>
+    <string name="welcome">Hello ! Let\'s get started and create a show. Select one or more images from your camera roll.</string>
+    <string name="self_photo">Would you like to attach a photo of yourself? Please say yes or no.</string>
+    <string name="change_order">Would you like to change order of the contents? Please say yes or no.</string>
+    <string name="edit">Do you want to make any changes? Please say yes or no.</string>
+    <string name="saved">Your show has been saved. Do you want to add another show? Please say yes or no.</string>
+    <string name="list_moments_empty">No shows were found. Do you want to create a new show? Please say yes or no.</string>
+    <string name="ask_edit_keywords">Do you want to make changes to the Keywords or Prelude? Yes or No</string>
+    <string name="lets_start">Let\'s get started and create a show.</string>
+</resources>

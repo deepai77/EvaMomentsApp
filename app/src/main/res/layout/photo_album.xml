@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/photo_album_view_pager_layout"
+    android:visibility="visible"
+    android:layout_centerInParent="true"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/photo_album_view"
+        android:visibility="visible">
+    </androidx.viewpager.widget.ViewPager>
+    <ImageView
+        android:visibility="gone"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginRight="20dp"
+        android:background="#0000"
+        android:id="@+id/rightSwipePhotoAlbum"
+        android:src="@drawable/right_swipe_button" />
+    <ImageView
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:id="@+id/leftSwipePhotoAlbum"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="20dp"
+        android:background="#0000"
+        android:src="@drawable/left_swipe_button" />
+    </RelativeLayout>
+</RelativeLayout>
