@@ -78,6 +78,8 @@
                             android:layout_margin="5dp"
                             android:visibility="gone"
                             android:layout_width="80dp"
+                            android:scaleType="fitXY"
+                            android:adjustViewBounds="true"
                             android:layout_height="80dp"
                             android:id="@+id/preludeImagePic"/>
                     </RelativeLayout>

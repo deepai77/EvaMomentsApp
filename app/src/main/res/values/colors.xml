@@ -12,4 +12,5 @@
     <color name="transparent">#0000</color>
     <color name="grey">#cfcece</color>
     <color name="media_controller_background">#36454f</color>
+    <color name="header_color">#DAE3F3</color>
 </resources>

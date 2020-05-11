@@ -52,7 +52,7 @@ import androidx.viewpager.widget.ViewPager;
 
 //The activity which plays the show
 public class PlayMomentActivity extends AppCompatActivity {
-    private ImageButton imageButton;
+    private ImageView imageButton;
     private String mimeType2;
     private TextView title;
     private Handler myHandler;

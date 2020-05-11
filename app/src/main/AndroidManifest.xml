@@ -13,7 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ShowCommandsActivity"
+        <activity android:name=".ui.SplashScreenActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.ShowCommandsActivity"
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.SettingsActivity"
@@ -25,11 +34,7 @@
             android:name=".ui.RegistrationActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.MainActivity"

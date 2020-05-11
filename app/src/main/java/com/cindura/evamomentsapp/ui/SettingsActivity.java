@@ -75,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements
     private String mimeType2;
     private ImageView imageView;
     private Button setDefaultButton, deregisterButton, familyPicButton;
-    private ImageButton backButton;
+    private ImageView backButton;
     private String name, familyPic;
     private TextView speechVolumeIndicator, playerVolumeIndicator, pitchIndicator, speedIndicator,deviceRegDate, deviceUserName;
     private SeekBar speechVolume, mediaPlayerVolume, pitchSeekBar, speedSeekBar;

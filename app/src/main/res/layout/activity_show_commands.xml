@@ -9,21 +9,21 @@
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@color/header_color"
         android:layout_height="wrap_content">
-        <ImageButton
+        <ImageView
             android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@color/colorAccent"
-            android:src="@drawable/back_button_white"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@color/header_color"
+            android:src="@drawable/back_button"
             android:layout_centerVertical="true"/>
         <TextView
             android:layout_toRightOf="@+id/backButton"
             android:id="@+id/settingsText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#fff"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:text="Common Commands"
             android:padding="15dp"

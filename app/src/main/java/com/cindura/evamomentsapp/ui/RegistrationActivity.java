@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.cindura.evamomentsapp.BuildConfig;
 import com.cindura.evamomentsapp.R;
 import com.cindura.evamomentsapp.helper.Config;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -386,6 +387,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         objPatient.put("City", city.getText().toString().trim());
                         objPatient.put("State",state.getText().toString().trim());
                         objPatient.put("Country",country.getText().toString().trim());
+                        objPatient.put("App release", BuildConfig.VERSION_NAME);
                     }
                 });
 

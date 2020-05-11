@@ -52,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.cindura.evamomentsapp.BuildConfig;
 import com.cindura.evamomentsapp.R;
 import com.cindura.evamomentsapp.adapter.GridAdapter;
 import com.cindura.evamomentsapp.adapter.ListMomentsAdapter;
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
     private int levenshteinDistance=5;
     private RelativeLayout relative;
     private LinearLayout chips;
-    private TextView chipsCancel,chipsYes,chipsNo;
+    private TextView chipsCancel,chipsYes,chipsNo,chipsExtra;
     private String noShowFound="No Shows found matching the search criteria...";
     //firebase
     private FirebaseFirestore db;
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements
         chipsCancel=findViewById(R.id.chipsCancel);
         chipsYes=findViewById(R.id.chipsYes);
         chipsNo=findViewById(R.id.chipsNo);
+        chipsExtra=findViewById(R.id.chipsExtra);
 
         displayImage();
 
@@ -394,6 +396,15 @@ public class MainActivity extends AppCompatActivity implements
         };
         handlerFirebase.post(mRunnableFirebase);
 
+        chipsExtra.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                askEdit=true;
+                addMoreState=true;
+                imageVideoPicker();
+                return false;
+            }
+        });
         chipsCancel.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -430,7 +441,10 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 chips.setVisibility(View.GONE);
-                if(chipsYes.getText().equals("Done")){
+                if(chipsYes.getText().equals("Done") && (top!=null && top.getVisibility()==View.VISIBLE)){
+                    editDone();
+                }
+                else if(chipsYes.getText().equals("Done")){
                     chipsYes.setText("Yes");
                     statusText.setText(processingText);
                     adapter = new GridAdapter(MainActivity.this, selectedItems);
@@ -480,12 +494,12 @@ public class MainActivity extends AppCompatActivity implements
                         keyword2.setVisibility(View.GONE);
                         keyword3.setVisibility(View.GONE);
                         audioAttached.setVisibility(View.GONE);
-                        if (top != null) {
+                        if (top != null && top.getVisibility()==View.VISIBLE) {
                             top.setVisibility(View.GONE);
+                            statusText.setText(processingText);
+                            adapter = new GridAdapter(MainActivity.this, selectedItems);
+                            recyclerView.setAdapter(adapter);
                         }
-                        statusText.setText(processingText);
-                        adapter = new GridAdapter(MainActivity.this, selectedItems);
-                        recyclerView.setAdapter(adapter);
                         nextStep(getResources().getString(R.string.ask_keywords));
                     } else if (askEdit) {
                         speechOff = false;
@@ -509,11 +523,22 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 chips.setVisibility(View.GONE);
-                if (askList) {
-                    askList = false;
-                }
-                else if (askSelfPhoto) {
-                    askSelfPhoto = false;
+                if(chipsNo.getText().equals("Save")){
+                    if(!selectedItems.isEmpty()) {
+                        askEdit = false;
+                        addMoreState=false;
+                        top.setVisibility(View.GONE);
+                        adapter = new GridAdapter(MainActivity.this, selectedItems);
+                        recyclerView.setAdapter(adapter);
+                        afterEdit();
+                    }else{
+                        Toast.makeText(MainActivity.this, "Empty album. Please add images/videos", Toast.LENGTH_LONG).show();
+                    }
+                }else {
+                    if (askList) {
+                        askList = false;
+                    } else if (askSelfPhoto) {
+                        askSelfPhoto = false;
                         preludeImageLayout.setVisibility(View.VISIBLE);
                         preludeImageAvailable.setVisibility(View.VISIBLE);
                         preludeImageAvailable.setText("Not Available");
@@ -522,21 +547,29 @@ public class MainActivity extends AppCompatActivity implements
                         else
                             nextStep(getResources().getString(R.string.congratulations));
 
-                } else if (changeOrder) {
-                    changeOrder = false;
+                    } else if (changeOrder) {
+                        changeOrder = false;
                         nextStep(getResources().getString(R.string.ask_keywords));
-                } else if (askKeywordsAgain) {
-                    askKeywordsAgain = false;
+                    } else if (askKeywordsAgain) {
+                        askKeywordsAgain = false;
+                        if (top != null && top.getVisibility()==View.VISIBLE) {
+                            top.setVisibility(View.GONE);
+                            statusText.setText(processingText);
+                            adapter = new GridAdapter(MainActivity.this, selectedItems);
+                            recyclerView.setAdapter(adapter);
+                        }
                         if (editPosition != null && !editPosition.equalsIgnoreCase(""))
                             nextStep(getResources().getString(R.string.congratulations_modified));
                         else
                             nextStep(getResources().getString(R.string.congratulations));
-                } else if (askEdit) {
+                    } else if (askEdit) {
                         askEdit = false;
                         afterEdit();
-                } else if (anotherPresentation) {
-                    anotherPresentation = false;
-                    commandsList=false;
+                    } else if (anotherPresentation) {
+                        anotherPresentation = false;
+                        commandsList = false;
+                        userQueryTextView.setText("");
+                    }
                 }
                 return false;
             }
@@ -575,10 +608,14 @@ public class MainActivity extends AppCompatActivity implements
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reset();
-                removeLayout();
-                userQueryTextView.setText(showingCommandsText);
-                displayImage();
+                if(!playPrelude.equalsIgnoreCase("")){
+                    listMoments();
+                }else {
+                    reset();
+                    removeLayout();
+                    userQueryTextView.setText(showingCommandsText);
+                    displayImage();
+                }
             }
         });
     }
@@ -830,6 +867,32 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    void editDone(){
+        if(!selectedItems.isEmpty()) {
+            if(timer !=null)
+            {
+                timer.cancel();
+            }
+            top.setVisibility(View.GONE);
+            adapter = new GridAdapter(MainActivity.this, selectedItems);
+            recyclerView.setAdapter(adapter);
+            if(mediaCount2!=null) {
+                if(String.valueOf(selectedItems.size()).equalsIgnoreCase(String.valueOf(maxItemCount))){
+                    mediaCount2.setText(String.valueOf(selectedItems.size())+" (Maximum Items)");
+                }else
+                    mediaCount2.setText(String.valueOf(selectedItems.size()));
+            }
+            askEdit = false;
+            addMoreState=false;
+            nextStep(getResources().getString(R.string.ask_edit_keywords));
+
+            if(selectedItems!=null && selectedItems.size()==maxItemCount)
+                Toast.makeText(MainActivity.this, "Maximum "+maxItemCount+" Items can be added", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(MainActivity.this, "Empty album. Please add images/videos", Toast.LENGTH_LONG).show();
+        }
+    }
     public class LoadGridTask extends AsyncTask<Void, Void, Void> {
 
         private boolean askEdit;
@@ -876,6 +939,16 @@ public class MainActivity extends AppCompatActivity implements
                         keywordsLayout=v.findViewById(R.id.keywordsLayout);
 
                         if(askEdit) {
+                            userQueryTextView.setText("");
+                            chipsCancel.setVisibility(View.VISIBLE);
+                            chipsExtra.setVisibility(View.VISIBLE);
+                            chipsYes.setVisibility(View.VISIBLE);
+                            chipsNo.setVisibility(View.VISIBLE);
+                            chipsCancel.setText("Cancel");
+                            chipsExtra.setText("Add more");
+                            chipsYes.setText("Done");
+                            chipsNo.setText("Save");
+                            chips.setVisibility(View.VISIBLE);
                             changeOrder=false;
                             if(detailsLayout.getVisibility()!=View.VISIBLE)
                             detailsLayout.setVisibility(View.GONE);
@@ -941,6 +1014,7 @@ public class MainActivity extends AppCompatActivity implements
                             addMore.setOnTouchListener(new View.OnTouchListener() {
                                 @Override
                                 public boolean onTouch(View v, MotionEvent event) {
+                                    askEdit=true;
                                     addMoreState=true;
                                     imageVideoPicker();
                                     return false;
@@ -950,29 +1024,7 @@ public class MainActivity extends AppCompatActivity implements
                             done.setOnTouchListener(new View.OnTouchListener() {
                                 @Override
                                 public boolean onTouch(View v, MotionEvent event) {
-                                    if(!selectedItems.isEmpty()) {
-                                        if(timer !=null)
-                                        {
-                                            timer.cancel();
-                                        }
-                                        top.setVisibility(View.GONE);
-                                        adapter = new GridAdapter(MainActivity.this, selectedItems);
-                                        recyclerView.setAdapter(adapter);
-                                        if(mediaCount2!=null) {
-                                            if(String.valueOf(selectedItems.size()).equalsIgnoreCase(String.valueOf(maxItemCount))){
-                                                mediaCount2.setText(String.valueOf(selectedItems.size())+" (Maximum Items)");
-                                            }else
-                                            mediaCount2.setText(String.valueOf(selectedItems.size()));
-                                        }
-                                        askEdit = false;
-                                        nextStep(getResources().getString(R.string.ask_edit_keywords));
-
-                                        if(selectedItems!=null && selectedItems.size()==maxItemCount)
-                                            Toast.makeText(MainActivity.this, "Maximum "+maxItemCount+" Items can be added", Toast.LENGTH_LONG).show();
-                                    }
-                                   else{
-                                        Toast.makeText(MainActivity.this, "Empty album. Please add images/videos", Toast.LENGTH_LONG).show();
-                                    }
+                                 editDone();
                                     return false;
                                 }
                             });
@@ -981,6 +1033,7 @@ public class MainActivity extends AppCompatActivity implements
                                 public boolean onTouch(View v, MotionEvent event) {
                                     if(!selectedItems.isEmpty()) {
                                         askEdit = false;
+                                        addMoreState=false;
                                         top.setVisibility(View.GONE);
                                         adapter = new GridAdapter(MainActivity.this, selectedItems);
                                         recyclerView.setAdapter(adapter);
@@ -997,7 +1050,7 @@ public class MainActivity extends AppCompatActivity implements
                         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.viewGiftConatiner);
                         insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-                        timer=new CountDownTimer(2000, 1000) {
+                        timer=new CountDownTimer(3000, 1000) {
                             public void onFinish() {
                                 if(!askEdit) {
                                     if (selectedItems.size() > 1) {
@@ -1011,6 +1064,7 @@ public class MainActivity extends AppCompatActivity implements
                                     }
                                 }else if(askEdit && addMoreState)
                                 {
+                                    askEdit=false;
                                     addMoreState=false;
                                     if(mediaCount2!=null) {
                                         if(String.valueOf(selectedItems.size()).equalsIgnoreCase(String.valueOf(maxItemCount))){
@@ -1021,7 +1075,6 @@ public class MainActivity extends AppCompatActivity implements
                                     nextStep(getResources().getString(R.string.ask_edit_keywords));
                                     if(selectedItems!=null && selectedItems.size()==maxItemCount)
                                         Toast.makeText(MainActivity.this, "Maximum "+maxItemCount+" Items can be added", Toast.LENGTH_LONG).show();
-
                                 }
                             }
 
@@ -1383,10 +1436,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     void nextStep(final String nextCommand) {
+        chipsExtra.setVisibility(View.GONE);
         chipsYes.setVisibility(View.VISIBLE);
         chipsCancel.setVisibility(View.VISIBLE);
         chipsCancel.setText("Cancel");
         chipsYes.setText("Yes");
+        chipsNo.setText("No");
         chipsNo.setVisibility(View.VISIBLE);
         chips.setVisibility(View.GONE);
         mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
@@ -1489,7 +1544,6 @@ public class MainActivity extends AppCompatActivity implements
                            createEditHelperCommands();
                             speechOff = false;
                             startSpeechRecognition();
-                            askEdit=false;
                             chips.setVisibility(View.VISIBLE);
                             askKeywordsAgain=true;
                          }
@@ -2151,14 +2205,20 @@ public class MainActivity extends AppCompatActivity implements
                         keyword2.setVisibility(View.GONE);
                         keyword3.setVisibility(View.GONE);
                         audioAttached.setVisibility(View.GONE);
-                        if (top != null) {
-                            top.setVisibility(View.GONE);
-                        }
-                        statusText.setText(processingText);
-                        adapter = new GridAdapter(MainActivity.this, selectedItems);
-                        recyclerView.setAdapter(adapter);
+                       if (top != null && top.getVisibility()==View.VISIBLE) {
+                           top.setVisibility(View.GONE);
+                           statusText.setText(processingText);
+                           adapter = new GridAdapter(MainActivity.this, selectedItems);
+                           recyclerView.setAdapter(adapter);
+                       }
                         nextStep(getResources().getString(R.string.ask_keywords));
                     } else {
+                        if (top != null && top.getVisibility()==View.VISIBLE) {
+                            top.setVisibility(View.GONE);
+                            statusText.setText(processingText);
+                            adapter = new GridAdapter(MainActivity.this, selectedItems);
+                            recyclerView.setAdapter(adapter);
+                        }
                         if (editPosition != null && !editPosition.equalsIgnoreCase(""))
                             nextStep(getResources().getString(R.string.congratulations_modified));
                         else
@@ -2177,6 +2237,26 @@ public class MainActivity extends AppCompatActivity implements
                             askEdit = false;
                             afterEdit();
                         }
+                    }else if(top.getVisibility()==View.VISIBLE){
+                        if(userQuery.toLowerCase().equalsIgnoreCase("Add more")){
+                            askEdit=true;
+                            addMoreState=true;
+                            imageVideoPicker();
+                        }else if(userQuery.toLowerCase().equalsIgnoreCase("Done")){
+                            editDone();
+                        }
+                        else if(userQuery.toLowerCase().equalsIgnoreCase("Save")){
+                            if(!selectedItems.isEmpty()) {
+                                askEdit = false;
+                                addMoreState=false;
+                                top.setVisibility(View.GONE);
+                                adapter = new GridAdapter(MainActivity.this, selectedItems);
+                                recyclerView.setAdapter(adapter);
+                                afterEdit();
+                            }else{
+                                Toast.makeText(MainActivity.this, "Empty album. Please add images/videos", Toast.LENGTH_LONG).show();
+                            }
+                        }
                     }
                 } else if (anotherPresentation) {
                     anotherPresentation = false;
@@ -2187,6 +2267,7 @@ public class MainActivity extends AppCompatActivity implements
                         displayImage();
                         imageVideoPicker();
                     }else{
+                        userQueryTextView.setText("");
                         chips.setVisibility(View.GONE);
                     }
                 }
@@ -2367,7 +2448,8 @@ public class MainActivity extends AppCompatActivity implements
         chipsNo.setVisibility(View.GONE);
         chips.setVisibility(View.VISIBLE);
         add.setVisibility(View.VISIBLE);
-        ImageView backButton = v.findViewById(R.id.backButton);
+        backButton.setVisibility(View.VISIBLE);
+       // ImageView backButton = v.findViewById(R.id.backButton);
        ImageView play=v.findViewById(R.id.play);
         ImageView edit=v.findViewById(R.id.edit);
         ImageView delete=v.findViewById(R.id.delete);
@@ -2430,12 +2512,15 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
+        /*
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listMoments();
             }
         });
+
+         */
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -3779,8 +3864,8 @@ public class MainActivity extends AppCompatActivity implements
                                             "Show Count",list.size(),
                                             "View Count", totalViewCount,
                                             "Number of Shows Played",showsPlayed,
-                                            "Last Created or Modified",date
-
+                                            "Last Created or Modified",date,
+                                            "App release", BuildConfig.VERSION_NAME
                                     ).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
