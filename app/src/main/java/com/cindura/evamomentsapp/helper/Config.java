@@ -4,4 +4,7 @@ package com.cindura.evamomentsapp.helper;
 public class Config {
     public static String AUTH_EMAIL="evamoments@forsenthealth.ai";
     public static String AUTH_PASSWORD="EvaMoments1234@2020";
+
+    //Eva Community Site
+    public static String SITE_URL="https://eva-community.mn.co/feed";
 }

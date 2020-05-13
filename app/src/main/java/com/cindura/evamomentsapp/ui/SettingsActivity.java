@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -40,6 +42,7 @@ import android.widget.VideoView;
 
 import com.cindura.evamomentsapp.R;
 import com.cindura.evamomentsapp.adapter.GridAdapter;
+import com.cindura.evamomentsapp.helper.Config;
 import com.cindura.evamomentsapp.helper.ItemMoveCallback;
 import com.cindura.evamomentsapp.model.Presentation;
 import com.cindura.evamomentsapp.model.PresentationList;
@@ -733,7 +736,7 @@ public class SettingsActivity extends AppCompatActivity implements
             String userQuery = matches.get(0);
             if(!userQuery.equals(" ") && !userQuery.equals("")) {
                 for (int i = 0; i < matches.size(); i++) {
-                    if (matches.get(i).equalsIgnoreCase("Quit") || matches.get(i).equalsIgnoreCase("Close") ||
+                    if (matches.get(i).equalsIgnoreCase("Eva Community") ||matches.get(i).equalsIgnoreCase("Quit") || matches.get(i).equalsIgnoreCase("Close") ||
                             matches.get(i).equalsIgnoreCase("Exit") || matches.get(i).equalsIgnoreCase("Cancel") || matches.get(i).equalsIgnoreCase("Settings") || matches.get(i).equalsIgnoreCase("create show") ||
                             matches.get(i).equalsIgnoreCase("create shows") ||
                             matches.get(i).equalsIgnoreCase("show settings") || matches.get(i).equalsIgnoreCase("show commands") ||
@@ -746,7 +749,14 @@ public class SettingsActivity extends AppCompatActivity implements
                 }
                 userQueryTextView.setText(userQuery);
                 System.out.println("user query: " + userQuery);
-                if (userQuery.equalsIgnoreCase("Quit") || userQuery.equalsIgnoreCase("Close") ||
+                if(userQuery.equalsIgnoreCase("Eva Community")){
+                    boolean isNetworkAvailable= isOffline(SettingsActivity.this);
+                    if(isNetworkAvailable)
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Config.SITE_URL)));
+                    else
+                        Toast.makeText(this, "Internet needed to open Eva Community", Toast.LENGTH_LONG).show();
+                }
+                else if (userQuery.equalsIgnoreCase("Quit") || userQuery.equalsIgnoreCase("Close") ||
                         userQuery.equalsIgnoreCase("Exit")) {
                    setInstructions("quit");
                 } else if (userQuery.equalsIgnoreCase("cancel")) {
@@ -846,5 +856,14 @@ public class SettingsActivity extends AppCompatActivity implements
             handlerMicrophone.removeCallbacks(mRunnableMicrophone);
         myHandler.removeCallbacks(myRunnable);
         finish();
+    }
+    public static boolean isOffline(Context thisActivity) {
+        ConnectivityManager connMgr = (ConnectivityManager) thisActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
+        if (activeInfo != null && activeInfo.isConnected()) {
+            return true;
+        }
+        return false;
     }
 }

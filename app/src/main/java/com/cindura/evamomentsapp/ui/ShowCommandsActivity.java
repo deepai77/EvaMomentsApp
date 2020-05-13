@@ -6,9 +6,13 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognitionListener;
@@ -23,9 +27,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cindura.evamomentsapp.R;
 import com.cindura.evamomentsapp.adapter.ShowCommandsAdapter;
+import com.cindura.evamomentsapp.helper.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +81,7 @@ public class ShowCommandsActivity extends AppCompatActivity implements
         voiceCommands.add("Show Settings");
         voiceCommands.add("Quit");
         voiceCommands.add("Cancel");
+        voiceCommands.add("Eva Community");
         voiceCommands.add("Play <Show name>");
         voiceCommands.add("Edit <Show name>");
         voiceCommands.add("Delete <Show name>");
@@ -86,6 +93,7 @@ public class ShowCommandsActivity extends AppCompatActivity implements
         evaResponses.add("Eva Settings and App Configuration");
         evaResponses.add("Closes the App");
         evaResponses.add("Cancels the current operation");
+        evaResponses.add("Navigates to Eva Community site");
         evaResponses.add("Plays the show");
         evaResponses.add("Edits the show");
         evaResponses.add("Deletes the show");
@@ -266,7 +274,7 @@ public class ShowCommandsActivity extends AppCompatActivity implements
             String userQuery = matches.get(0);
             if (!userQuery.equals(" ") && !userQuery.equals("")) {
                 for (int i = 0; i < matches.size(); i++) {
-                    if (matches.get(i).equalsIgnoreCase("Quit") || matches.get(i).equalsIgnoreCase("Close") ||
+                    if (matches.get(i).equalsIgnoreCase("Eva Community") || matches.get(i).equalsIgnoreCase("Quit") || matches.get(i).equalsIgnoreCase("Close") ||
                             matches.get(i).equalsIgnoreCase("Exit") || matches.get(i).equalsIgnoreCase("Cancel") || matches.get(i).equalsIgnoreCase("Settings") || matches.get(i).equalsIgnoreCase("create show") ||
                             matches.get(i).equalsIgnoreCase("create shows") ||
                             matches.get(i).equalsIgnoreCase("show settings") || matches.get(i).equalsIgnoreCase("show commands") ||
@@ -279,7 +287,14 @@ public class ShowCommandsActivity extends AppCompatActivity implements
                 }
                 userQueryTextView.setText(userQuery);
                 System.out.println("user query: " + userQuery);
-                if (userQuery.equalsIgnoreCase("Quit") || userQuery.equalsIgnoreCase("Close") ||
+                if(userQuery.equalsIgnoreCase("Eva Community")){
+                    boolean isNetworkAvailable= isOffline(ShowCommandsActivity.this);
+                    if(isNetworkAvailable)
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Config.SITE_URL)));
+                    else
+                        Toast.makeText(this, "Internet needed to open Eva Community", Toast.LENGTH_LONG).show();
+                }
+                else if (userQuery.equalsIgnoreCase("Quit") || userQuery.equalsIgnoreCase("Close") ||
                         userQuery.equalsIgnoreCase("Exit")) {
                     setInstructions("quit");
                 } else if (userQuery.equalsIgnoreCase("cancel")) {
@@ -383,4 +398,14 @@ public class ShowCommandsActivity extends AppCompatActivity implements
         myHandler.removeCallbacks(myRunnable);
         finish();
     }
+    public static boolean isOffline(Context thisActivity) {
+        ConnectivityManager connMgr = (ConnectivityManager) thisActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
+        if (activeInfo != null && activeInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
 }
