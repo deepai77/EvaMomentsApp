@@ -18,6 +18,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,7 +202,7 @@ public class PlayMomentActivity extends AppCompatActivity {
         insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         mediaPlayer = new MediaPlayer();
-        int mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
+        int mediaPlayerProgress = pref.getInt("preludeVolume", 0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, (mediaPlayerProgress * am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) / 100, 0);
         try {
             mediaPlayer.setDataSource(AudioSavePathInDevice);
@@ -252,6 +253,8 @@ public class PlayMomentActivity extends AppCompatActivity {
     }
 
     void showAlbum() {
+        int mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, (mediaPlayerProgress * am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) / 100, 0);
         currentPagePhotoAlbum=0;
         removeLayout();
         final LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context
@@ -478,7 +481,7 @@ public class PlayMomentActivity extends AppCompatActivity {
                     leftSwipePhotoAlbum.setVisibility(View.VISIBLE);
                     rightSwipePhotoAlbum.setVisibility(View.VISIBLE);
                 }
-
+                if(pref.getString("autoSwipe","").equalsIgnoreCase("true"))
                 autoSwipePhotoAlbum(viewPager,currentPagePhotoAlbum,selectedItems.size());
             }
 
@@ -489,6 +492,7 @@ public class PlayMomentActivity extends AppCompatActivity {
         };
         viewPager.addOnPageChangeListener(viewListenerPhotoAlbum);
 
+        if(pref.getString("autoSwipe","").equalsIgnoreCase("true"))
          autoSwipePhotoAlbum(viewPager,currentPagePhotoAlbum,selectedItems.size());
     }
     public void autoSwipePhotoAlbum(final ViewPager slideViewPagerPhotoAlbum,final int currentPagePhotoAlbum2, final int photoAlbumUriLength){
@@ -660,4 +664,5 @@ public class PlayMomentActivity extends AppCompatActivity {
             autoSwipeTimer.cancel();
         finish();
     }
+
 }

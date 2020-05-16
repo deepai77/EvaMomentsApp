@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -340,6 +341,24 @@ public class ShowCommandsActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         startSpeechRecognition();
+        if(listening.getVisibility()==View.VISIBLE){
+            progressBar.setVisibility(View.VISIBLE);
+            listening.setVisibility(View.INVISIBLE);
+            statusText.setText(processingText);
+
+            new CountDownTimer(1500, 1000) {
+                public void onFinish() {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    listening.setVisibility(View.VISIBLE);
+                    statusText.setVisibility(View.VISIBLE);
+                    statusText.setText(listeningText);
+                }
+
+                public void onTick(long millisUntilFinished) {
+                    // millisUntilFinished    The amount of time until finished.
+                }
+            }.start();
+        }
         handlerMicrophone.postDelayed(mRunnableMicrophone, 5L * 1000L);
         myHandler.postDelayed(myRunnable, Long.parseLong(delayNavigation) * 1000);
     }

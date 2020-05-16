@@ -23,6 +23,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -80,8 +81,8 @@ public class SettingsActivity extends AppCompatActivity implements
     private Button setDefaultButton, deregisterButton, familyPicButton;
     private ImageView backButton;
     private String name, familyPic;
-    private TextView speechVolumeIndicator, playerVolumeIndicator, pitchIndicator, speedIndicator,deviceRegDate, deviceUserName;
-    private SeekBar speechVolume, mediaPlayerVolume, pitchSeekBar, speedSeekBar;
+    private TextView speechVolumeIndicator,preludeVolumeIndicator, playerVolumeIndicator, pitchIndicator, speedIndicator,deviceRegDate, deviceUserName;
+    private SeekBar speechVolume, mediaPlayerVolume, pitchSeekBar, speedSeekBar,preludeVolume;
     private AudioManager audioManager;
     private Spinner spinnerDelayPhotoAlbum, spinnerNavigation, spinnerRepeat;
     private String[] delayNavigation = {"5","10","15","20","25","30","35","40","45","50","55","60"};
@@ -109,6 +110,7 @@ public class SettingsActivity extends AppCompatActivity implements
         String deviceRegDateText = pref.getString("date", "");
         int mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
         int speechVolumeProgress = pref.getInt("speechVolume", 0);
+        int preludeVolumeProgress =pref.getInt("preludeVolume",0);
         int pitch = pref.getInt("pitch", 0);
         int speed = pref.getInt("speed", 0);
         String autoSwipe = pref.getString("autoSwipe", null);
@@ -151,6 +153,8 @@ public class SettingsActivity extends AppCompatActivity implements
         spinnerDelayPhotoAlbum = findViewById(R.id.spinnerDelayPhotoAlbum);
         setDefaultButton = findViewById(R.id.defaultButton);
         speechVolume = findViewById(R.id.speechVolume);
+        preludeVolume =findViewById(R.id.preludeVolume);
+        preludeVolumeIndicator=findViewById(R.id.preludeVolumeIndicator);
         mediaPlayerVolume = findViewById(R.id.audioPlayerVolume);
         speedSeekBar = findViewById(R.id.speedSeekBar);
         speedSeekBar = findViewById(R.id.speedSeekBar);
@@ -315,6 +319,13 @@ public class SettingsActivity extends AppCompatActivity implements
             speechVolume.setProgress(0);
             speechVolumeIndicator.setText("0");
         }
+        if (preludeVolumeProgress != 0) {
+            preludeVolume.setProgress(preludeVolumeProgress);
+            preludeVolumeIndicator.setText(String.valueOf(preludeVolumeProgress * audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 100));
+        } else {
+            preludeVolume.setProgress(0);
+            preludeVolumeIndicator.setText("0");
+        }
         if (pitch != 0) {
             pitchIndicator.setText(String.valueOf((float) pitch / 100));
             pitchSeekBar.setProgress(pitch);
@@ -354,6 +365,24 @@ public class SettingsActivity extends AppCompatActivity implements
                 editor.putInt("speechVolume", progress);
                 editor.apply();
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (progress * audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) / 100, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        preludeVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                preludeVolumeIndicator.setText(String.valueOf(progress * audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 100));
+                editor.putInt("preludeVolume", progress);
+                editor.apply();
             }
 
             @Override
@@ -428,19 +457,21 @@ public class SettingsActivity extends AppCompatActivity implements
                 editor.putInt("speed", 85);
                 editor.putInt("pitch", 80);
                 editor.putInt("mediaPlayerVolume", 70);
+                editor.putInt("preludeVolume",100);
                 editor.putInt("speechVolume", 0);
                 editor.putInt("maxWords", 10);
-                editor.putInt("delayPhotoAlbum", 1);
+                editor.putInt("delayPhotoAlbum", 3);
                 editor.putString("navigationDelay", "30");
                 switchAutoSwipe.setChecked(true);
                 mediaPlayerVolume.setProgress(70);
+                preludeVolume.setProgress(100);
                 pitchSeekBar.setProgress(80);
                 speechVolume.setProgress(0);
                 speedSeekBar.setProgress(85);
                 spinnerDelayPhotoAlbum.setSelection(1);
                 spinnerRepeat.setSelection(0);
                 switchPlayback.setChecked(false);
-                spinnerNavigation.setSelection(0);
+                spinnerNavigation.setSelection(5);
                 editor.apply();
             }
         });
@@ -802,6 +833,24 @@ public class SettingsActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         startSpeechRecognition();
+        if(listening.getVisibility()==View.VISIBLE){
+            progressBar.setVisibility(View.VISIBLE);
+            listening.setVisibility(View.INVISIBLE);
+            statusText.setText(processingText);
+
+            new CountDownTimer(1500, 1000) {
+                public void onFinish() {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    listening.setVisibility(View.VISIBLE);
+                    statusText.setVisibility(View.VISIBLE);
+                    statusText.setText(listeningText);
+                }
+
+                public void onTick(long millisUntilFinished) {
+                    // millisUntilFinished    The amount of time until finished.
+                }
+            }.start();
+        }
         handlerMicrophone.postDelayed(mRunnableMicrophone, 5L * 1000L);
         myHandler.postDelayed(myRunnable, Long.parseLong(navigationDelayValue) * 1000);
     }

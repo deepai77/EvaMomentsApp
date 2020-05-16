@@ -180,11 +180,36 @@
                 android:textStyle="bold"
                 android:layout_alignParentRight="true" />
             <TextView
-                android:layout_below="@+id/speechVolume"
+                android:id="@+id/t"
+                android:layout_below="@id/speechVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prelude audio volume"
+                android:textColor="#000"
+                android:layout_margin="20dp"/>
+            <SeekBar
+                android:id="@+id/preludeVolume"
+                android:progress="100"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/t"/>
+            <TextView
+                android:layout_below="@+id/preludeVolume"
+                android:id="@+id/preludeVolumeIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="15dp"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true" />
+            <TextView
+                android:layout_below="@+id/preludeVolume"
                 android:id="@+id/playerText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Audio message player volume"
+                android:text="Media player volume"
                 android:textColor="#000"
                 android:layout_margin="20dp"/>
             <SeekBar

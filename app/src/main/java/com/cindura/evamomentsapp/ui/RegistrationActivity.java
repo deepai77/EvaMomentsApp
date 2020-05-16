@@ -113,8 +113,9 @@ public class RegistrationActivity extends AppCompatActivity {
             editor.putInt("pitch", 80);
             editor.putInt("mediaPlayerVolume", 70);
             editor.putInt("speechVolume",0);
+            editor.putInt("preludeVolume",100);
             editor.putString("autoSwipe", "true");
-            editor.putInt("delayPhotoAlbum",1);
+            editor.putInt("delayPhotoAlbum",3);
             editor.putString("navigationDelay","30");
             editor.putString("playback","false");
             editor.putString("repeat","0");

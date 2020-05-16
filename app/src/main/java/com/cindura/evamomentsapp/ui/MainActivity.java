@@ -42,6 +42,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -702,6 +703,23 @@ public class MainActivity extends AppCompatActivity implements
         textToSpeech.speak("" , TextToSpeech.QUEUE_FLUSH, null, null);
 
         startSpeechRecognition();
+        if(listening.getVisibility()==View.VISIBLE && !speechOff){
+            progressBar.setVisibility(View.VISIBLE);
+            listening.setVisibility(View.INVISIBLE);
+            statusText.setVisibility(View.GONE);
+
+            new CountDownTimer(1500, 1000) {
+                public void onFinish() {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    listening.setVisibility(View.VISIBLE);
+                    statusText.setVisibility(View.VISIBLE);
+                }
+
+                public void onTick(long millisUntilFinished) {
+                    // millisUntilFinished    The amount of time until finished.
+                }
+            }.start();
+        }
             handlerMicrophone.postDelayed(mRunnableMicrophone, 5L * 1000L);
         if(onCreateCalled) {
             handlerFirebase.postDelayed(mRunnableFirebase, 60L * 1000L);
@@ -1050,7 +1068,7 @@ public class MainActivity extends AppCompatActivity implements
                         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.viewGiftConatiner);
                         insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-                        timer=new CountDownTimer(3000, 1000) {
+                        timer=new CountDownTimer(2000, 1000) {
                             public void onFinish() {
                                 if(!askEdit) {
                                     if (selectedItems.size() > 1) {
@@ -1636,7 +1654,7 @@ public class MainActivity extends AppCompatActivity implements
         insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         mediaPlayer = new MediaPlayer();
-        int mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
+        int mediaPlayerProgress = pref.getInt("preludeVolume", 0);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, (mediaPlayerProgress * am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) / 100, 0);
         try {
             mediaPlayer.setDataSource(AudioSavePathInDevice);
@@ -1675,6 +1693,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     void showAlbum() {
+        int mediaPlayerProgress = pref.getInt("mediaPlayerVolume", 0);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, (mediaPlayerProgress * am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) / 100, 0);
+
         currentPagePhotoAlbum=0;
          removeLayout();
         final LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context
@@ -1857,6 +1878,7 @@ public class MainActivity extends AppCompatActivity implements
                     rightSwipePhotoAlbum.setVisibility(View.VISIBLE);
                 }
 
+                if(pref.getString("autoSwipe","").equalsIgnoreCase("true"))
                 autoSwipePhotoAlbum(viewPager,currentPagePhotoAlbum,selectedItems.size());
             }
 
@@ -1867,6 +1889,7 @@ public class MainActivity extends AppCompatActivity implements
         };
          viewPager.addOnPageChangeListener(viewListenerPhotoAlbum);
 
+        if(pref.getString("autoSwipe","").equalsIgnoreCase("true"))
         autoSwipePhotoAlbum(viewPager,currentPagePhotoAlbum,selectedItems.size());
     }
 
@@ -2287,6 +2310,9 @@ public class MainActivity extends AppCompatActivity implements
     void imageVideoPicker(){
         commandsList=false;
         filteredList.clear();
+        if(timer!=null){
+            timer.cancel();
+        }
         Gson gson = new GsonBuilder().serializeNulls().create();
         presentationList= gson.fromJson(pref.getString("list", null), PresentationList.class);
         list.clear();
@@ -2404,6 +2430,7 @@ public class MainActivity extends AppCompatActivity implements
         for(int i=0;i<keywords.size();i++){
             key=key+keywords.get(i)+", ";
         }
+        if(key!=null && key.length()!=0)
         keywordsTextView.setText(key.substring(0,key.length()-2));
 
         adapter = new GridAdapter(MainActivity.this, selectedItems,askEdit);
@@ -2881,6 +2908,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     void reset(){
+        chipsExtra.setVisibility(View.GONE);
         if(myHandler!=null && myRunnable!=null)
         myHandler.removeCallbacks(myRunnable);
         if(countDownTimerListMoments!=null){
